@@ -3,7 +3,7 @@ import { readDB, writeDB } from '@/lib/db';
 
 export async function POST(request) {
   try {
-    const { message, leadId, history = [] } = await request.json();
+    const { message, leadId, history = [], language = 'en-US' } = await request.json();
     if (!message || message.trim() === '') {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
     }
@@ -13,11 +13,28 @@ export async function POST(request) {
     let botReply = "";
     let usedAI = false;
 
+    // Language name mapping for instruction
+    const langNames = {
+      'hi-IN': 'Hindi',
+      'ta-IN': 'Tamil',
+      'te-IN': 'Telugu',
+      'kn-IN': 'Kannada',
+      'es-ES': 'Spanish',
+      'fr-FR': 'French',
+      'en-US': 'English'
+    };
+
+    const targetLangName = langNames[language] || 'English';
+
     // 1. Run AI Chatbot if enabled and API Key is present
     if (settings.mode === 'ai' && settings.apiKey && settings.apiKey.trim() !== '') {
       try {
         const apiKey = settings.apiKey.trim();
+        const provider = settings.provider || 'openrouter'; // default or fallback to openrouter
         const systemPrompt = `${settings.systemPrompt}
+
+IMPORTANT LANGUAGE INSTRUCTION:
+You MUST reply to the user in ${targetLangName} language (Language code: ${language}). Keep all technical facts, fees, and college details accurate.
 
 Here is the official college information for your reference:
 COLLEGE NAME: ${collegeInfo.name}
@@ -43,60 +60,104 @@ CUSTOM PRE-DEFINED FAQS (Fallback Keywords):
 ${keywords.map(kw => `- Topic "${kw.keyword}": ${kw.reply}`).join('\n')}
 `;
 
-        // Format history for Gemini
-        // Gemini expects: { role: 'user' | 'model', parts: [{ text: string }] }
-        const contents = [];
-        
-        // Add previous messages (limit to last 10 messages for context)
-        const chatContext = history.slice(-10);
-        for (const msg of chatContext) {
-          contents.push({
-            role: msg.sender === 'user' ? 'user' : 'model',
-            parts: [{ text: msg.text }]
-          });
-        }
-        
-        // Add the current user message
-        contents.push({
-          role: 'user',
-          parts: [{ text: message }]
-        });
+        if (provider === 'openrouter') {
+          // Format messages for OpenRouter (OpenAI-compatible text-to-text RAG completion)
+          const messages = [
+            { role: 'system', content: systemPrompt }
+          ];
 
-        // Call Google Gemini API
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-          {
+          const chatContext = history.slice(-10);
+          for (const msg of chatContext) {
+            messages.push({
+              role: msg.sender === 'user' ? 'user' : 'assistant',
+              content: msg.text
+            });
+          }
+
+          messages.push({
+            role: 'user',
+            content: message
+          });
+
+          const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
             headers: {
+              'Authorization': `Bearer ${apiKey}`,
               'Content-Type': 'application/json',
+              'HTTP-Referer': 'http://localhost:3000',
+              'X-Title': 'College RAG Chatbot'
             },
             body: JSON.stringify({
-              contents,
-              systemInstruction: {
-                parts: [{ text: systemPrompt }]
-              },
-              generationConfig: {
-                temperature: 0.3,
-                maxOutputTokens: 800
-              }
+              model: settings.model || 'openai/gpt-3.5-turbo',
+              messages,
+              temperature: 0.3,
+              max_tokens: 800
             })
-          }
-        );
+          });
 
-        if (response.ok) {
-          const resData = await response.json();
-          if (resData.candidates && resData.candidates[0] && resData.candidates[0].content && resData.candidates[0].content.parts[0]) {
-            botReply = resData.candidates[0].content.parts[0].text;
-            usedAI = true;
+          if (response.ok) {
+            const resData = await response.json();
+            if (resData.choices && resData.choices[0] && resData.choices[0].message) {
+              botReply = resData.choices[0].message.content;
+              usedAI = true;
+            } else {
+              console.error("Unexpected OpenRouter response structure:", resData);
+            }
           } else {
-            console.error("Unexpected Gemini response structure:", resData);
+            const errText = await response.text();
+            console.error("OpenRouter API call failed status:", response.status, errText);
           }
         } else {
-          const errText = await response.text();
-          console.error("Gemini API call failed status:", response.status, errText);
+          // Google Gemini API Provider
+          const contents = [];
+          const chatContext = history.slice(-10);
+          for (const msg of chatContext) {
+            contents.push({
+              role: msg.sender === 'user' ? 'user' : 'model',
+              parts: [{ text: msg.text }]
+            });
+          }
+          
+          contents.push({
+            role: 'user',
+            parts: [{ text: message }]
+          });
+
+          const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                contents,
+                systemInstruction: {
+                  parts: [{ text: systemPrompt }]
+                },
+                generationConfig: {
+                  temperature: 0.3,
+                  maxOutputTokens: 800
+                }
+              })
+            }
+          );
+
+          if (response.ok) {
+            const resData = await response.json();
+            if (resData.candidates && resData.candidates[0] && resData.candidates[0].content && resData.candidates[0].content.parts[0]) {
+              botReply = resData.candidates[0].content.parts[0].text;
+              usedAI = true;
+            } else {
+              console.error("Unexpected Gemini response structure:", resData);
+            }
+          } else {
+            const errText = await response.text();
+            console.error("Gemini API call failed status:", response.status, errText);
+          }
         }
       } catch (err) {
-        console.error("Error calling Gemini API:", err);
+        console.error("Error calling AI API:", err);
       }
     }
 

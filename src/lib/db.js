@@ -7,7 +7,8 @@ const defaultData = {
   settings: {
     mode: "ai", // "ai" or "keyword"
     apiKey: "",
-    provider: "gemini", // "gemini"
+    provider: "openrouter", // "openrouter" or "gemini"
+    model: "openai/gpt-3.5-turbo",
     systemPrompt: "You are the helpful AI Admission Counselor for Apex Institute of Technology & Sciences. Use the college information provided below to answer user queries. Keep answers concise, informative, and friendly. If you don't know the answer, politely ask them to leave their contact details so a human counselor can follow up."
   },
   collegeInfo: {
@@ -18,11 +19,11 @@ const defaultData = {
     email: "admissions@apex-institute.edu",
     phone: "+1 (555) 019-2834",
     courses: [
-      { id: "c1", name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "$12,000 / year", eligibility: "High school graduate with Physics, Chemistry, and Math. Min 75% aggregate." },
-      { id: "c2", name: "B.Tech Data Science & AI", duration: "4 Years", fees: "$12,500 / year", eligibility: "High school graduate with Math and Science background. Min 70% aggregate." },
-      { id: "c3", name: "B.Tech Electronics & Communication", duration: "4 Years", fees: "$11,000 / year", eligibility: "High school graduate with Physics, Chemistry, and Math. Min 65% aggregate." },
-      { id: "c4", name: "MBA (Business Analytics)", duration: "2 Years", fees: "$15,000 / year", eligibility: "Bachelor's degree in any stream with min 60% score + entrance interview clearance." },
-      { id: "c5", name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "$9,500 / year", eligibility: "BCA or Bachelor's in CS/Maths with minimum 55% score." }
+      { id: "c1", name: "B.Tech Computer Science & Engineering", duration: "4 Years", fees: "₹1,50,000 / year", eligibility: "High school graduate with Physics, Chemistry, and Math. Min 75% aggregate." },
+      { id: "c2", name: "B.Tech Data Science & AI", duration: "4 Years", fees: "₹1,60,000 / year", eligibility: "High school graduate with Math and Science background. Min 70% aggregate." },
+      { id: "c3", name: "B.Tech Electronics & Communication", duration: "4 Years", fees: "₹1,40,000 / year", eligibility: "High school graduate with Physics, Chemistry, and Math. Min 65% aggregate." },
+      { id: "c4", name: "MBA (Business Analytics)", duration: "2 Years", fees: "₹2,00,000 / year", eligibility: "Bachelor's degree in any stream with min 60% score + entrance interview clearance." },
+      { id: "c5", name: "MCA (Master of Computer Applications)", duration: "2 Years", fees: "₹1,20,000 / year", eligibility: "BCA or Bachelor's in CS/Maths with minimum 55% score." }
     ],
     facilities: [
       { name: "Robotics & AI Center", description: "State-of-the-art laboratory powered by industry-grade equipment and GPU compute servers." },
@@ -44,10 +45,10 @@ const defaultData = {
     ]
   },
   keywords: [
-    { id: "k1", keyword: "fees", reply: "Our annual tuition fees are: B.Tech CSE ($12,000), B.Tech Data Science ($12,500), B.Tech ECE ($11,000), MBA ($15,000), and MCA ($9,500). Installment options and educational loans are available." },
-    { id: "k2", keyword: "hostel", reply: "Yes! We offer on-campus residential housing. The hostel charges are $3,500 per year, which covers fully-furnished rooms, 3 daily meals, laundry service, and full Wi-Fi/electricity backup." },
+    { id: "k1", keyword: "fees", reply: "Our annual tuition fees are: B.Tech CSE (₹1,50,000), B.Tech Data Science (₹1,60,000), B.Tech ECE (₹1,40,000), MBA (₹2,00,000), and MCA (₹1,20,000). Installment options and educational loans are available." },
+    { id: "k2", keyword: "hostel", reply: "Yes! We offer on-campus residential housing. The hostel charges are ₹65,000 per year, which covers fully-furnished rooms, 3 daily meals, laundry service, and full Wi-Fi/electricity backup." },
     { id: "k3", keyword: "scholarship", reply: "We offer merit scholarships: 50% tuition waiver for students scoring above 95% in high school, and 25% waiver for scores between 85% and 94%. We also support various government and sport scholarships." },
-    { id: "k4", keyword: "placements", reply: "Apex Institute has an excellent placement record. Our average package is $85,000/year, and our highest package reached $180,000 last year. Top recruiters include Google, Microsoft, Meta, Amazon, and NVIDIA." }
+    { id: "k4", keyword: "placements", reply: "Apex Institute has an excellent placement record. Our average package is ₹8,50,000/year, and our highest package reached ₹45,000,00/year last year. Top recruiters include Google, Microsoft, Meta, Amazon, and TCS." }
   ],
   leads: [
     {
@@ -107,13 +108,10 @@ export async function writeDB(data) {
     if (!fs.existsSync(dir)) {
       await fs.promises.mkdir(dir, { recursive: true });
     }
-    // Write atomically via a temporary file in the same folder to prevent half-writes
-    const tempPath = `${dbPath}.tmp`;
-    await fs.promises.writeFile(tempPath, JSON.stringify(data, null, 2), 'utf-8');
-    await fs.promises.rename(tempPath, dbPath);
+    await fs.promises.writeFile(dbPath, JSON.stringify(data, null, 2), 'utf-8');
     return true;
   } catch (error) {
     console.error("Error writing database:", error);
-    return false;
+    throw error;
   }
 }

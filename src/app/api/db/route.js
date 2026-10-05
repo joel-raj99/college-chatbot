@@ -95,12 +95,9 @@ export async function POST(request) {
         return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
     }
 
-    if (success) {
-      return NextResponse.json({ success: true, db });
-    } else {
-      return NextResponse.json({ error: "Failed to write data" }, { status: 500 });
-    }
+    return NextResponse.json({ success: true, db });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to process request: " + error.message }, { status: 500 });
+    console.error("API DB Error:", error);
+    return NextResponse.json({ error: "Failed to write data: " + error.message }, { status: 500 });
   }
 }

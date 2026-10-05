@@ -1,52 +1,24 @@
 {
   "settings": {
     "mode": "ai",
-    "apiKey": "",
+    "apiKey": "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",
     "provider": "gemini",
     "systemPrompt": "You are the helpful AI Admission Counselor for Apex Institute of Technology & Sciences. Use the college information provided below to answer user queries. Keep answers concise, informative, and friendly. If you don't know the answer, politely ask them to leave their contact details so a human counselor can follow up."
   },
   "collegeInfo": {
-    "name": "Apex Institute of Technology & Sciences",
-    "tagline": "Fostering Innovation, Integrity, and Excellence since 2010",
+    "name": "Sandhiya Arts & science ",
+    "tagline": "Fostering Innovation, Integrity, and Excellence since 2020",
     "description": "Apex Institute is a premier institution offering state-of-the-art engineering, management, and technology education. Accredited with Grade 'A+', we prepare students for high-growth global careers through hands-on learning, industry-vetted curriculums, and research opportunities.",
-    "location": "Silicon Valley, CA (Metro Campus)",
+    "location": "kannarpalayam ",
     "email": "admissions@apex-institute.edu",
-    "phone": "+1 (555) 019-2834",
+    "phone": "+91-9566593695",
     "courses": [
       {
-        "id": "c1",
-        "name": "B.Tech Computer Science & Engineering",
-        "duration": "4 Years",
-        "fees": "$12,000 / year",
-        "eligibility": "High school graduate with Physics, Chemistry, and Math. Min 75% aggregate."
-      },
-      {
-        "id": "c2",
-        "name": "B.Tech Data Science & AI",
-        "duration": "4 Years",
-        "fees": "$12,500 / year",
-        "eligibility": "High school graduate with Math and Science background. Min 70% aggregate."
-      },
-      {
-        "id": "c3",
-        "name": "B.Tech Electronics & Communication",
-        "duration": "4 Years",
-        "fees": "$11,000 / year",
-        "eligibility": "High school graduate with Physics, Chemistry, and Math. Min 65% aggregate."
-      },
-      {
-        "id": "c4",
-        "name": "MBA (Business Analytics)",
-        "duration": "2 Years",
-        "fees": "$15,000 / year",
-        "eligibility": "Bachelor's degree in any stream with min 60% score + entrance interview clearance."
-      },
-      {
-        "id": "c5",
-        "name": "MCA (Master of Computer Applications)",
-        "duration": "2 Years",
-        "fees": "$9,500 / year",
-        "eligibility": "BCA or Bachelor's in CS/Maths with minimum 55% score."
+        "name": "B.Tech - Artifical and Data structure  ",
+        "duration": "3 Years",
+        "fees": "1,50,000",
+        "eligibility": "Access to 50,000+ print volumes and digital subscriptions to IEEE, ACM, and Springer journals.",
+        "id": "c-1785164264495"
       }
     ],
     "facilities": [
@@ -96,12 +68,12 @@
     {
       "id": "k1",
       "keyword": "fees",
-      "reply": "Our annual tuition fees are: B.Tech CSE ($12,000), B.Tech Data Science ($12,500), B.Tech ECE ($11,000), MBA ($15,000), and MCA ($9,500). Installment options and educational loans are available."
+      "reply": "Our annual tuition fees are: B.Tech CSE (₹1,50,000), B.Tech Data Science (₹1,60,000), B.Tech ECE (₹1,40,000), MBA (₹2,00,000), and MCA (₹1,20,000). Installment options and educational loans are available."
     },
     {
       "id": "k2",
       "keyword": "hostel",
-      "reply": "Yes! We offer on-campus residential housing. The hostel charges are $3,500 per year, which covers fully-furnished rooms, 3 daily meals, laundry service, and full Wi-Fi/electricity backup."
+      "reply": "Yes! We offer on-campus residential housing. The hostel charges are ₹65,000 per year, which covers fully-furnished rooms, 3 daily meals, laundry service, and full Wi-Fi/electricity backup."
     },
     {
       "id": "k3",
@@ -111,45 +83,17 @@
     {
       "id": "k4",
       "keyword": "placements",
-      "reply": "Apex Institute has an excellent placement record. Our average package is $85,000/year, and our highest package reached $180,000 last year. Top recruiters include Google, Microsoft, Meta, Amazon, and NVIDIA."
+      "reply": "Apex Institute has an excellent placement record. Our average package is ₹8,50,000/year, and our highest package reached ₹45,00,000 last year. Top recruiters include Google, Microsoft, Meta, Amazon, and TCS."
     }
   ],
   "leads": [
-    {
-      "id": "l1",
-      "name": "John Miller",
-      "email": "john.miller@example.com",
-      "phone": "+1 415 889 0292",
-      "course": "B.Tech Computer Science & Engineering",
-      "status": "New",
-      "notes": "Enquired about placement statistics and scholarship availability.",
-      "createdAt": "2026-07-18T08:15:30.000Z",
-      "chatHistory": [
-        {
-          "sender": "user",
-          "text": "I'm interested in computer science"
-        },
-        {
-          "sender": "bot",
-          "text": "That is a great choice! Our B.Tech Computer Science & Engineering program is a 4-year degree focusing on software engineering, AI, and systems. What specific questions do you have?"
-        },
-        {
-          "sender": "user",
-          "text": "What is the fee and is there a placement cell?"
-        },
-        {
-          "sender": "bot",
-          "text": "The tuition fee is $12,000 per year. We also have an outstanding placement cell with recruiters like Google and Microsoft, securing an average package of $85,000/year."
-        }
-      ]
-    },
     {
       "id": "l2",
       "name": "Sarah Patel",
       "email": "sarah.patel@example.com",
       "phone": "+1 650 493 0200",
       "course": "MBA (Business Analytics)",
-      "status": "Contacted",
+      "status": "Follow-up",
       "notes": "Called on July 18 morning. Will submit transcripts by end of week.",
       "createdAt": "2026-07-17T14:22:10.000Z",
       "chatHistory": [
@@ -244,18 +188,66 @@
       ]
     },
     {
-      "id": "l-1784348126472",
-      "name": "joelpaulin raj",
-      "email": "joelpaulin99@gmail.com",
-      "phone": "+919566593695",
-      "course": "B.Tech Electronics & Communication",
-      "status": "Interested",
-      "notes": "Enquiry generated online. Interested in: B.Tech Electronics & Communication",
-      "createdAt": "2026-07-18T04:15:26.472Z",
+      "id": "l-1785162239066",
+      "name": "sandhiya ",
+      "email": "sandhiya@gmail.com",
+      "phone": "9566593695",
+      "course": "B.Tech Data Science & AI",
+      "status": "Contacted",
+      "notes": "Enquiry generated online. Interested in: B.Tech Data Science & AI",
+      "createdAt": "2026-07-27T14:23:59.066Z",
       "chatHistory": [
         {
           "sender": "bot",
-          "text": "Hi joelpaulin raj! Welcome to the Apex Institute of Technology & Sciences admission helpline. I see you are interested in the **B.Tech Electronics & Communication** program. \n        \nHow can I assist you with your admissions today? You can ask about fees, hostel facilities, scholarships, eligibility, or placement details!"
+          "text": "Hi sandhiya ! Welcome to the Apex Institute of Technology & Sciences admission helpline. I see you are interested in the **B.Tech Data Science & AI** program. \n        \nHow can I assist you with your admissions today? You can ask about fees, hostel facilities, scholarships, eligibility, or placement details!"
+        },
+        {
+          "sender": "user",
+          "text": "What are the fees for B.Tech Data Science & AI?"
+        },
+        {
+          "sender": "bot",
+          "text": "Our annual tuition fees are: B.Tech CSE (₹1,50,000), B.Tech Data Science (₹1,60,000), B.Tech ECE (₹1,40,000), MBA (₹2,00,000), and MCA (₹1,20,000). Installment options and educational loans are available."
+        },
+        {
+          "sender": "user",
+          "text": "What is the application deadline and admission process?"
+        },
+        {
+          "sender": "bot",
+          "text": "Here are the important dates for our admission cycle: \n\n• **Applications Open**: August 1, 2026\n• **Early Admission Round Deadline**: November 15, 2026\n• **Scholarship Test Schedule**: January 10, 2027\n• **Regular Application Deadline**: March 31, 2027\n\nMake sure to complete your application before the deadlines!"
+        }
+      ]
+    },
+    {
+      "id": "l-1791222156042",
+      "name": "joel",
+      "email": "joelpaulin99@gmail.com",
+      "phone": "9566593695",
+      "course": "B.Tech - Artifical and Data structure  ",
+      "status": "New",
+      "notes": "Enquiry generated online. Interested in: B.Tech - Artifical and Data structure  ",
+      "createdAt": "2026-10-05T17:42:36.042Z",
+      "chatHistory": [
+        {
+          "sender": "bot",
+          "text": "Hi joel! Welcome to the Sandhiya Arts & science  admission helpline. I see you are interested in the **B.Tech - Artifical and Data structure  ** program. \n        \nHow can I assist you with your admissions today? You can ask about fees, hostel facilities, scholarships, eligibility, or placement details!"
+        },
+        {
+          "sender": "user",
+          "text": "What are the fees for B.Tech - Artifical and Data structure  ?"
+        },
+        {
+          "sender": "bot",
+          "text": "Our annual tuition fees are: B.Tech CSE (₹1,50,000), B.Tech Data Science (₹1,60,000), B.Tech ECE (₹1,40,000), MBA (₹2,00,000), and MCA (₹1,20,000). Installment options and educational loans are available."
+        },
+        {
+          "sender": "user",
+          "text": "What are the fees for B.Tech - Artifical and Data structure  ?"
+        },
+        {
+          "sender": "bot",
+          "text": "Our annual tuition fees are: B.Tech CSE (₹1,50,000), B.Tech Data Science (₹1,60,000), B.Tech ECE (₹1,40,000), MBA (₹2,00,000), and MCA (₹1,20,000). Installment options and educational loans are available."
         }
       ]
     }
