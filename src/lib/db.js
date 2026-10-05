@@ -1,7 +1,12 @@
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 
-const dbPath = path.join(process.cwd(), 'src', 'lib', 'db.json');
+const primaryDbPath = path.join(process.cwd(), 'src', 'lib', 'db.json');
+const tmpDbPath = path.join(os.tmpdir(), 'db.json');
+
+// In-memory cache for serverless invocation lifecycle
+let memoryDb = null;
 
 const defaultData = {
   settings: {
@@ -48,7 +53,7 @@ const defaultData = {
     { id: "k1", keyword: "fees", reply: "Our annual tuition fees are: B.Tech CSE (₹1,50,000), B.Tech Data Science (₹1,60,000), B.Tech ECE (₹1,40,000), MBA (₹2,00,000), and MCA (₹1,20,000). Installment options and educational loans are available." },
     { id: "k2", keyword: "hostel", reply: "Yes! We offer on-campus residential housing. The hostel charges are ₹65,000 per year, which covers fully-furnished rooms, 3 daily meals, laundry service, and full Wi-Fi/electricity backup." },
     { id: "k3", keyword: "scholarship", reply: "We offer merit scholarships: 50% tuition waiver for students scoring above 95% in high school, and 25% waiver for scores between 85% and 94%. We also support various government and sport scholarships." },
-    { id: "k4", keyword: "placements", reply: "Apex Institute has an excellent placement record. Our average package is ₹8,50,000/year, and our highest package reached ₹45,000,00/year last year. Top recruiters include Google, Microsoft, Meta, Amazon, and TCS." }
+    { id: "k4", keyword: "placements", reply: "Apex Institute has an excellent placement record. Our average package is ₹8,50,000/year, and our highest package reached ₹45,00,000/year last year. Top recruiters include Google, Microsoft, Meta, Amazon, and TCS." }
   ],
   leads: [
     {
@@ -85,33 +90,55 @@ const defaultData = {
 };
 
 export async function readDB() {
+  if (memoryDb) {
+    return memoryDb;
+  }
   try {
-    const dir = path.dirname(dbPath);
-    if (!fs.existsSync(dir)) {
-      await fs.promises.mkdir(dir, { recursive: true });
+    // 1. Try temp path first if it was modified previously in Vercel / serverless runtime
+    if (fs.existsSync(tmpDbPath)) {
+      const fileContent = await fs.promises.readFile(tmpDbPath, 'utf-8');
+      memoryDb = JSON.parse(fileContent);
+      return memoryDb;
     }
-    if (!fs.existsSync(dbPath)) {
-      await fs.promises.writeFile(dbPath, JSON.stringify(defaultData, null, 2), 'utf-8');
-      return defaultData;
+    // 2. Read from bundled project dbPath
+    if (fs.existsSync(primaryDbPath)) {
+      const fileContent = await fs.promises.readFile(primaryDbPath, 'utf-8');
+      memoryDb = JSON.parse(fileContent);
+      return memoryDb;
     }
-    const fileContent = await fs.promises.readFile(dbPath, 'utf-8');
-    return JSON.parse(fileContent);
+    memoryDb = defaultData;
+    return memoryDb;
   } catch (error) {
     console.error("Error reading database:", error);
-    return defaultData;
+    memoryDb = memoryDb || defaultData;
+    return memoryDb;
   }
 }
 
 export async function writeDB(data) {
+  memoryDb = data;
+  let primarySuccess = false;
+
+  // 1. Try writing to primary project path (works in local dev)
   try {
-    const dir = path.dirname(dbPath);
+    const dir = path.dirname(primaryDbPath);
     if (!fs.existsSync(dir)) {
       await fs.promises.mkdir(dir, { recursive: true });
     }
-    await fs.promises.writeFile(dbPath, JSON.stringify(data, null, 2), 'utf-8');
-    return true;
-  } catch (error) {
-    console.error("Error writing database:", error);
-    throw error;
+    await fs.promises.writeFile(primaryDbPath, JSON.stringify(data, null, 2), 'utf-8');
+    primarySuccess = true;
+  } catch (err) {
+    console.warn("Primary DB write failed (likely read-only serverless filesystem like Vercel):", err.message);
   }
+
+  // 2. Fall back to writing to /tmp directory (works on Vercel serverless lambda)
+  try {
+    await fs.promises.writeFile(tmpDbPath, JSON.stringify(data, null, 2), 'utf-8');
+    return true;
+  } catch (tmpErr) {
+    console.warn("Tmp DB write failed:", tmpErr.message);
+  }
+
+  // Even if file write fails, in-memory state is updated for current instance lifecycle
+  return primarySuccess || true;
 }
